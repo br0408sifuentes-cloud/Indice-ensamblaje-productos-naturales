@@ -1,0 +1,36 @@
+import matplotlib; matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib.patches import FancyBboxPatch
+plt.rcParams.update({"font.family": "serif", "font.serif": ["Times New Roman", "Liberation Serif", "DejaVu Serif"]})
+fig, ax = plt.subplots(figsize=(11, 6.4)); ax.set_xlim(0, 110); ax.set_ylim(0, 64); ax.axis("off")
+C = {"nat": "#2E7D32", "syn": "#6A1B9A", "pc": "#1E88E5", "abio": "#E65100", "proc": "#455A64", "an": "#37474F"}
+def caja(x, y, w, h, titulo, texto, col, fs=7.2):
+    ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.4,rounding_size=1.2", fc="white", ec=col, lw=1.6))
+    ax.add_patch(FancyBboxPatch((x, y + h - 3.2), w, 3.2, boxstyle="round,pad=0.4,rounding_size=1.2", fc=col, ec=col, lw=1.6))
+    ax.text(x + w / 2, y + h - 1.6, titulo, ha="center", va="center", color="white", fontsize=8.4, fontweight="bold")
+    ax.text(x + 1.2, y + h - 4.6, texto, ha="left", va="top", fontsize=fs, color="0.15", linespacing=1.35)
+def flecha(x1, y1, x2, y2, col="0.35"):
+    ax.annotate("", xy=(x2, y2), xytext=(x1, y1), arrowprops=dict(arrowstyle="-|>", color=col, lw=1.3, shrinkA=2, shrinkB=2))
+ax.text(1, 62.5, "1. Fuentes de datos", fontsize=9, fontweight="bold", color="0.2")
+ax.text(29, 62.5, "2. Preparación", fontsize=9, fontweight="bold", color="0.2")
+ax.text(58, 62.5, "3. Descriptores", fontsize=9, fontweight="bold", color="0.2")
+ax.text(84, 62.5, "4. Análisis", fontsize=9, fontweight="bold", color="0.2")
+caja(1, 50, 24, 10, "Productos naturales", "COCONUT 2.0 (con organismo)\nNPAtlas 3.0 (replicación)", C["nat"])
+caja(1, 38, 24, 10, "Compuestos sintéticos", "ChEMBL (dos muestras)\nPubChem (muestra aleatoria)", C["syn"])
+caja(1, 26, 24, 10, "Moléculas abióticas", "Bennu (Nivel A)\nMurchison (Nivel B)", C["abio"])
+caja(1, 12, 24, 12, "Validación", "1.271 moléculas con MA\npublicado (checks,\ncoconut_55, gdb13_1201)", C["proc"])
+caja(29, 38, 25, 22, "Selección y estandarización", "Muestras aleatorias\ncon semilla fija\nExclusión de esqueletos\nnaturales en sintéticos\nFragmento mayor, neutralización\ny tautómero canónico\nTamaño: 15 a 35 enlaces", C["proc"])
+caja(29, 12, 25, 22, "Cálculo del MA", "assembly-theory 0.7.0\nHasta 8 formas de Kekulé\n(MA máx. y mín.)\nUn proceso aislado por\nmolécula (límite 10 s)\nSegunda pasada de 120 s\ncon cota superior", C["proc"])
+caja(58, 38, 23, 22, "Contenido de información", "MA (índice de ensamblaje)\nBertz\nCompresión: SMILES,\nlista de enlaces y\nmatriz de adyacencia\nEntropía de entornos\nSimetría", C["an"])
+caja(58, 12, 23, 22, "Estereoquímica y forma", "Fracción de C estereogénicos\nFsp3\nRamificación (MC1)\nComposición atómica\nPuntuación NP\nRutas biosintéticas\n(NPClassifier)", C["an"])
+caja(85, 44, 24, 16, "A. Igual tamaño", "AUC estratificado por n.º\nexacto de enlaces\nPrueba de van Elteren\nValor incremental (RV)\ny permutaciones", C["pc"])
+caja(85, 27, 24, 15, "B. Fórmula idéntica", "Pares natural–sintético\ncon igual fórmula y\nn.º de enlaces\nPrueba de signo\nPredicción registrada", C["pc"])
+caja(85, 12, 24, 13, "C. Robustez", "Replicación (NPAtlas)\nPubChem y control\nnegativo, procedencia,\nKekulé, simetría", C["pc"])
+for y in (55, 43): flecha(25.5, y, 28.6, y if y == 55 else 45)
+flecha(25.5, 31, 28.6, 25); flecha(25.5, 18, 28.6, 18)
+flecha(41.5, 37.6, 41.5, 34.6)
+flecha(54.5, 23, 57.6, 45); flecha(54.5, 23, 57.6, 23)
+flecha(81.5, 49, 84.6, 52); flecha(81.5, 49, 84.6, 34); flecha(81.5, 23, 84.6, 34); flecha(81.5, 23, 84.6, 18)
+ax.text(55, 3.5, "Predicciones de B y C registradas por correo electrónico antes de ejecutar cada análisis.  "
+        "Mapa del espacio químico (t-SNE) como apoyo visual.", ha="center", fontsize=7.6, style="italic", color="0.3")
+fig.savefig("figuras/Figura1_diagrama_metodologia.png", dpi=300, bbox_inches="tight"); print("ok")
